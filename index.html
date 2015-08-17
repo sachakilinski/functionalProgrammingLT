@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>FP</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+	</head>
+
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+					<script type="text/template">
+						#FP
+						###sacha.kilinski@ilegra.com
+					</script>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+							> "Programação Funcional é programar com funções." - Erik Mejer, Brian Beckman
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							> "Programação Funcional é mais uma maneira de pensar do que um conjunto de ferramentas" - Neal Ford
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							> "Programação Funcional é programar com funções MATEMÀTICAS." - Erik Mejer
+						</script>
+					</section>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+						##Não é algo novo
+						![](images/timeline.png)
+					</script>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+							##um nível maior de Abstração
+							![](images/whatvshow.jpg)
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+							##Paradigmas: Imperativo(OO) VS Declarativo(FP)
+							![](images/oovsfp.PNG)
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+							##Exemplo:
+							###Classificador de números perfeitos (versão OO)
+							<pre><code class="hljs javascript"  contenteditable>
+								function NumberClassifier(){
+									var factors = [];
+									var sum = 0;
+									var number = 0;
+
+									var calculateFactors = function(){
+										for(var i = 1; i <  number; i++ ){
+											if( isFactor(i)){
+												factors.push(i);
+											}
+										}
+									}
+
+									var isFactor = function(i){
+										return  number%i == 0;
+									}
+
+									var sumFactors = function (){
+										for( var f in factors){
+											sum += parseInt(factors[f]);
+										}
+									}
+
+									var classify = function(){
+										calculateFactors();
+										sumFactors();
+										if(sum == number){
+											return "perfect";
+										}
+										else{
+											return "not perfect"
+										}
+									}
+
+									var setNumber = function(n){
+										number = n;
+									}
+
+									return {
+										classify: classify,
+										setNumber: setNumber
+									}
+								}
+							</code></pre>
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+							###A mesma coisa, só que mais "orientado à funções"
+							<pre><code class="hljs javascript"  contenteditable>
+								var calculateFactors = function(number){
+									var factors =[];
+									for(var i = 1; i <  number; i++ ){
+										if( isFactor(i, number)){
+											factors.push(i);
+										}
+									}
+									return factors;
+								}
+
+								var isFactor = function(i, number){
+									return  number%i == 0;
+								}
+
+								var sumFactors = function (factors){
+									var sum = 0;
+									for( var f in factors){
+										sum += parseInt(factors[f]);
+									}
+									return sum;
+								}
+
+								var classify = function(number){
+									var factors = calculateFactors(number);
+									var sum = sumFactors(factors);
+									if(sum == number){
+										return "perfect";
+									}
+									else{
+										return "not perfect"
+									}
+								}
+							</code></pre>
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+							###A mesma coisa, deixando a linguagem lidar com as operações sobre coleções
+							<pre><code class="hljs javascript"  contenteditable>
+								var _ = require("./underscore.js")
+
+								var calculateFactors = function(number){ return _.filter(_.range(number), isFactor(number))}
+								var isFactor = function(number){return  function(i){ return number%i == 0}}
+
+								var sumFactors = function (factors){return _.reduce(factors, add)}
+								var add = function(a,b){return a + b }
+
+								var classify = function(number){
+									var factors = calculateFactors(number);
+									var sum = sumFactors(factors);
+									if(sum == number){
+										return "perfect";
+									}
+									else{
+										return "not perfect"
+									}
+								}
+							</code></pre>
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+							###A mesma coisa, pensando funcionalmente
+							<pre><code class="javascript"  contenteditable>
+								function calculateFactors(number){ return _.range(number).filter(isFactor(number))}
+								function isFactor(number){return  function(i){ return number%i == 0}}
+								function add(a,b){return a + b }
+
+								function classify(number, classifier){
+									return classifier(number);
+								}
+
+								function perfectNumberClassifier(number){
+									return ( calculateFactors(number).reduce(add) == number) ? "perfect" : "not perfect";
+								}
+							</code></pre>
+						</script>
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+							###Funções PURAS
+							![](images/machine.jpg)
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+							###Composição de Funções
+							![](images/gears.jpg)
+						</script>
+					</section>
+				</section>
+
+
+				<section data-markdown>
+					<script type="text/template">
+						##Outros termos associados à FP:
+						- Pureza<!-- .element: class="fragment" data-fragment-index="1" -->
+						- Transparência referencial<!-- .element: class="fragment" data-fragment-index="2" -->
+						- Memoization<!-- .element: class="fragment" data-fragment-index="3" -->
+						- Currying<!-- .element: class="fragment" data-fragment-index="4" -->
+						- Funções Parciais<!-- .element: class="fragment" data-fragment-index="5" -->
+						- Functors / Monads<!-- .element: class="fragment" data-fragment-index="6" -->
+						- Matematiquês generalizado<!-- .element: class="fragment" data-fragment-index="7" -->
+					</script>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+						##Obrigado
+						###sacha.kilinski@ilegra.com
+					</script>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+		</script>
+
+	</body>
+</html>
